@@ -20,16 +20,6 @@ import (
 	redigo "github.com/garyburd/redigo/redis"
 )
 
-type Configuration struct {
-	AccessKey          string
-	SecretKey          string
-	Bucket             string
-	Region             string
-	RedisServerAndPort string
-	Port               int
-}
-
-var config = Configuration{}
 var aws_bucket *s3.Bucket
 var redisPool *redigo.Pool
 
@@ -37,7 +27,6 @@ type RedisFile struct {
 	FileName string
 	Folder   string
 	S3Path   string
-	// Optional - we use are Teamwork.com but feel free to rmove
 	FileId       int64 `json:",string"`
 	ProjectId    int64 `json:",string"`
 	ProjectName  string
@@ -51,19 +40,12 @@ func main() {
 		return
 	}
 
-	configFile, _ := os.Open("conf.json")
-	decoder := json.NewDecoder(configFile)
-	err := decoder.Decode(&config)
-	if err != nil {
-		panic("Error reading conf")
-	}
-
 	initAwsBucket()
 	InitRedis()
 
-	fmt.Println("Running on port", config.Port)
+	fmt.Println("Running on port", os.Getenv("PORT"))
 	http.HandleFunc("/", handler)
-	http.ListenAndServe(":"+strconv.Itoa(config.Port), nil)
+	http.ListenAndServe(":" + os.Getenv("PORT"), nil)
 }
 
 func test() {
@@ -95,12 +77,12 @@ func parseFileDates(files []*RedisFile) {
 
 func initAwsBucket() {
 	expiration := time.Now().Add(time.Hour * 1)
-	auth, err := aws.GetAuth(config.AccessKey, config.SecretKey, "", expiration) //"" = token which isn't needed
+	auth, err := aws.GetAuth(os.Getenv("AWS_ACCESS_KEY_ID"), os.Getenv("AWS_SECRET_ACCESS_KEY"), "", expiration) //"" = token which isn't needed
 	if err != nil {
 		panic(err)
 	}
 
-	aws_bucket = s3.New(auth, aws.GetRegion(config.Region)).Bucket(config.Bucket)
+	aws_bucket = s3.New(auth, aws.GetRegion(os.Getenv("AWS_REGION"))).Bucket(os.Getenv("AWS_S3_BUCKET_NAME"))
 }
 
 func InitRedis() {
@@ -108,7 +90,7 @@ func InitRedis() {
 		MaxIdle:     10,
 		IdleTimeout: 1 * time.Second,
 		Dial: func() (redigo.Conn, error) {
-			return redigo.Dial("tcp", config.RedisServerAndPort)
+			return redigo.DialURL(os.Getenv("REDIS_URL"))
 		},
 		TestOnBorrow: func(c redigo.Conn, t time.Time) (err error) {
 			_, err = c.Do("PING")
@@ -127,7 +109,7 @@ func getFilesFromRedis(ref string) (files []*RedisFile, err error) {
 
 	// Testing - enable to test. Remove later.
 	if 1 == 0 && ref == "test" {
-		files = append(files, &RedisFile{FileName: "test.zip", Folder: "", S3Path: "test/test.zip"}) // Edit and dplicate line to test
+		files = append(files, &RedisFile{FileName: "test.zip", Folder: "", S3Path: "test/test.zip"}) // Edit and duplicate line to test
 		return
 	}
 
@@ -137,6 +119,9 @@ func getFilesFromRedis(ref string) (files []*RedisFile, err error) {
 	// Get the value from Redis
 	result, err := redis.Do("GET", "zip:"+ref)
 	if err != nil || result == nil {
+		fmt.Println("-------------")
+		log.Print(err.Error())
+		fmt.Println("-------------")
 		err = errors.New("Access Denied (sorry your link has timed out)")
 		return
 	}
