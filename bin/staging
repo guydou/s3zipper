@@ -1,0 +1,2 @@
+#!/bin/sh
+HEROKU_APP=tff-s3zipper-staging HKAPP=tff-s3zipper-staging exec "${HEROKU_COMMAND:-heroku}" "$@"
