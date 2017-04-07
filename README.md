@@ -19,6 +19,6 @@ and a rest client to register jsons on port 8124
 
 will return a string
 
-browse to http://localhost:8123?ref=<that string>
+browse to http://localhost:8123?ref=<that_string>
 
 
