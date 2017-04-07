@@ -1,7 +1,7 @@
 version: '2'
 services:
     zipper:
-        build: .
+        build: zipper/
         links: 
              - redis:redis
         environment:
