@@ -10,9 +10,18 @@ services:
             - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
             - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
             - REDIS_URL=redis://redis
-        #ports:
-            #-  8123:8000
+        ports:
+            -  8123:8000
 
     redis:
         image: redis
+
+    rest:
+        build: rest/
+        volumes: 
+           - ./rest/:/app/
+        ports:
+           - 8124:8000
+        links:
+            - redis:redis
 
