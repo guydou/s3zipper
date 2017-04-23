@@ -40,12 +40,14 @@ AWS_STORAGE_BUCKET_NAME=<bucket> AWS_REGION=<region> AWS_ACCESS_KEY_ID=<key> AWS
 you will have zipper server running on port 8123
 and a rest client to register jsons on port 8124
 
+assuming you have a *file.json* with the schema
+
 ```
  curl -X POST -H "Content-Type: application/json" -d@./files.json http://localhost:8124/
 ```
 
 will return a string
 
-browse to http://localhost:8123?ref=<that_string>
+browse to http://localhost:8123/zip/<that_string>
 
 
