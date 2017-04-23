@@ -1,7 +1,7 @@
 version: '2'
 services:
     zipper:
-        build: zipper/
+        image: guydou/s3zipper-core
         links: 
              - redis:redis
         environment:
@@ -17,7 +17,7 @@ services:
         image: redis
 
     rest:
-        build: rest/
+        image: guydou/s3zipper-rest
         #volumes: 
            #- ./rest/:/app/
         #ports:
