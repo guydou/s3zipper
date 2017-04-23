@@ -1,27 +1,25 @@
 version: '2'
 services:
     zipper:
-        image: guydou/s3zipper-core
+        image: guydou/zipper-python
         links: 
              - redis:redis
         environment:
-            - AWS_S3_BUCKET_NAME=$AWS_S3_BUCKET_NAME
+            - AWS_STORAGE_BUCKET_NAME=$AWS_STORAGE_BUCKET_NAME
             - AWS_REGION=$AWS_REGION
             - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
             - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-            - REDIS_URL=redis://redis
-        #ports:
-            #-  8123:8000
+        ports:
+            -  8125:8000
 
     redis:
         image: redis
 
     rest:
-        image: guydou/s3zipper-rest
-        #volumes: 
-           #- ./rest/:/app/
-        #ports:
-           #- 8124:8000
+        image: guydou/zipper-rest
         links:
             - redis:redis
+        ports:
+            -  8124:8000
+
 

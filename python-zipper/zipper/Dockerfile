@@ -1,4 +1,4 @@
-FROM python:3.5-alpine
+FROM python:3.5.2
 
 ADD requirements.txt /app/requirements.txt
 
@@ -10,4 +10,4 @@ ADD ./ /app/
 
 EXPOSE 8000
 
-CMD gunicorn -w 2 -b :8000 app:app
+CMD gunicorn -c zipper/gunicorn_conf.py zipper.wsgi

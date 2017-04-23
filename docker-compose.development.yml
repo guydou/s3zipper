@@ -1,8 +1,12 @@
 version: '2'
 services:
     zipper:
+        build: python-zipper/zipper/
+        volumes:
+            - ./python-zipper/zipper:/app/
         ports:
-            -  8123:8000
+            -  8125:8000
+        command: gunicorn -c zipper/gunicorn_conf.py zipper.wsgi
 
     rest:
         volumes: 
