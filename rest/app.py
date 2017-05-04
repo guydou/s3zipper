@@ -4,6 +4,9 @@ import json
 import redis
 import random
 import string
+from healthcheck import HealthCheck
+
+health = HealthCheck()
 
 
 def randomword(length):
@@ -11,6 +14,15 @@ def randomword(length):
 
 app = Flask(__name__)
 r = redis.StrictRedis(host='redis', port=6379, db=0)
+
+
+def redis_available():
+    info = r.info()
+    assert info, "problems"
+    return True, "redis ok"
+
+health.add_check(redis_available)
+app.add_url_rule("/healthcheck", view_func=lambda: health.run())
 
 
 @app.route("/", methods=['POST'])
