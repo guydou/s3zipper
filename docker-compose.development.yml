@@ -6,9 +6,11 @@ services:
             - ./python-zipper/zipper:/app/
         ports:
             -  8125:8000
-        command: gunicorn -c zipper/gunicorn_conf.py zipper.wsgi
+        #command: gunicorn -c zipper/gunicorn_conf.py zipper.wsgi
+        command: python manage.py runserver 0.0.0.0:8000
 
     rest:
+        build: rest/
         volumes: 
            - ./rest/:/app/
         ports:

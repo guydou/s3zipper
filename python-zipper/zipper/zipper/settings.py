@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '()1tl6_ua*s2n)g%50@35$(qes+y-b9b5i)^393jym4**3)%5m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -37,7 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'storages'
+    'storages',
+    'health_check',
+    'health_check.storage',
+    'redis_healthchecks.apps.RedisHealthchecksConfig',
+
 ]
 
 MIDDLEWARE = [

@@ -4,3 +4,4 @@ django-storages
 zipstream
 redis
 gunicorn
+django-health-check
