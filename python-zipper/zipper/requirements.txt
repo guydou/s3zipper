@@ -1,7 +1,8 @@
 django
-boto3
-django-storages
+boto
+git+https://github.com/guydou/django-storages.git@f870fb4a76952c0363fea51ee86fbf0b5c5815f2
 zipstream
 redis
 gunicorn
 django-health-check
+azure-storage

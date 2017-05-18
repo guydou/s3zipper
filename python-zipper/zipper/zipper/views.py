@@ -1,6 +1,6 @@
 from django.http import StreamingHttpResponse, HttpResponseBadRequest
 from zipstream import ZIP_DEFLATED, ZipFile
-from django.core.files.storage import default_storage
+from django.core.files.storage import get_storage_class
 import redis
 import json
 
@@ -29,8 +29,10 @@ def zipball(request, token):
         filepath = file_def.get("path", None)
         file_content = file_def.get("content", None)
         filename = file_def.get("filename", None)
+        backend = file_def.get("backend", None)
         if filepath:
-            f = default_storage.open(filepath, 'r')
+            storage = get_storage_class(backend)()
+            f = storage.open(filepath, 'r')
             z.write_iter(filename, read_in_chunks(f))
         elif file_content:
             z.writestr(filename, file_content.encode("utf-8"))
